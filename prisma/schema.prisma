@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+    provider            = "mysql"
+    url                 = env("DATABASE_URL")
+
+    relationMode        = "prisma"
+}
+
+model Post {
+    id          Int         @id @default(autoincrement())
+    title       String
+    description String
+    content     String      @db.LongText
+    userId      String
+    userName    String
+    userAvatar  String
+    votes       Int
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+}
+
+model Comment {
+    id          Int         @id @default(autoincrement())
+    content     String      @db.LongText
+    userName    String
+    userAvatar  String
+    votes       Int
+    postId      Int
+    parentId    Int?
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+}
+
+model Vote {
+    id          Int         @id @default(autoincrement())
+    postId      Int
+    postType    Int
+    userId      String
+    score       Int
+
+    @@unique([postId, postType], name: "voteId")
+}
